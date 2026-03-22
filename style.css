@@ -1,0 +1,163 @@
+* {
+  box-sizing: border-box;
+}
+
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(135deg,#1a0033,#4b0082);
+  color:white;
+}
+
+.screen{display:none;height:100vh;}
+.screen.active{display:flex;justify-content:center;align-items:center;}
+
+.center{text-align:center;}
+
+.card {
+  width: 90%;
+  max-width: 400px;
+  background: rgba(42, 0, 77, 0.9);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(123, 44, 255, 0.4);
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: #1f003d;
+  color: white;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid #bb86fc;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#7b2cff;
+  color:white;
+  font-weight:bold;
+}
+
+.secondary{background:#555;}
+
+#preview img, #imagens img{
+  width:30%;
+  margin:5px;
+}
+
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* ===== TEMA ADMIN (AZUL) ===== */
+
+body.admin {
+  background: linear-gradient(135deg, #001a33, #003366);
+}
+
+body.admin .card {
+  background: rgba(0, 40, 80, 0.8);
+  box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
+}
+
+body.admin h1,
+body.admin h2 {
+  color: #66ccff;
+}
+
+body.admin button {
+  background: linear-gradient(135deg, #0099ff, #66ccff);
+}
+
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.galeria img {
+  width: 100px;
+  border-radius: 10px;
+}
+
+/* ===== ADMIN RESPONSIVO ===== */
+
+body.admin .card {
+  width: 95%;
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+/* lista de cards */
+#lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* card individual */
+#lista .card {
+  width: 100%;
+}
+
+/* layout interno */
+.admin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* galeria */
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.galeria img {
+  width: 100%;
+  max-width: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* ===== DESKTOP ===== */
+@media (min-width: 768px) {
+
+  #lista .card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .admin-info {
+    flex: 1;
+  }
+
+  .galeria {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .galeria img {
+    max-width: 100px;
+  }
+}
