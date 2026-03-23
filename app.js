@@ -185,6 +185,12 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "admin.html";
     });
 
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+    reg.update();
+  });
+}
+
 });
 
 function toBase64(file) {
