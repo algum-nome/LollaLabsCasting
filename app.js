@@ -1,125 +1,88 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ===== FIREBASE =====
-    const firebaseConfig = {
-        apiKey: "AIzaSyCFIWJ-rt3T5_mYIA3LOQ3VeiSpEaj11Hs",
-        authDomain: "lolla-casting-6ee1f.firebaseapp.com",
-        projectId: "lolla-casting-6ee1f",
-        storageBucket: "lolla-casting-6ee1f.appspot.com",
-        messagingSenderId: "667541474611",
-        appId: "1:667541474611:web:9d6a5a7439e97176088246"
-    };
+  // ===== FIREBASE =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFIWJ-rt3T5_mYIA3LOQ3VeiSpEaj11Hs",
+    authDomain: "lolla-casting-6ee1f.firebaseapp.com",
+    projectId: "lolla-casting-6ee1f",
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-    // ===== ELEMENTOS =====
-    const home = document.getElementById("home");
-    const formScreen = document.getElementById("formScreen");
-    const previewScreen = document.getElementById("previewScreen");
+  // ===== ELEMENTOS =====
+  const home = document.getElementById("home");
+  const formScreen = document.getElementById("formScreen");
+  const previewScreen = document.getElementById("previewScreen");
 
-    const startBtn = document.getElementById("startBtn");
-    const editarBtn = document.getElementById("editar");
-    const confirmarBtn = document.getElementById("confirmar");
+  const startBtn = document.getElementById("startBtn");
+  const adminBtn = document.getElementById("adminBtn");
+  const editarBtn = document.getElementById("editar");
+  const confirmarBtn = document.getElementById("confirmar");
 
-    const form = document.getElementById("form");
-    const fotos = document.getElementById("fotos");
+  const form = document.getElementById("form");
+  const fotos = document.getElementById("fotos");
 
-    const nome = document.getElementById("nome");
-    const idade = document.getElementById("idade");
-    const altura = document.getElementById("altura");
-    const email = document.getElementById("email");
-    const telefone = document.getElementById("telefone");
-    const cidade = document.getElementById("cidade");
+  const nome = document.getElementById("nome");
+  const idade = document.getElementById("idade");
+  const altura = document.getElementById("altura");
+  const email = document.getElementById("email");
+  const telefone = document.getElementById("telefone");
+  const cidade = document.getElementById("cidade");
 
-    const preview = document.getElementById("preview");
-    const dados = document.getElementById("dados");
-    const imagens = document.getElementById("imagens");
-    const status = document.getElementById("status");
+  const preview = document.getElementById("preview");
+  const dados = document.getElementById("dados");
+  const imagens = document.getElementById("imagens");
+  const status = document.getElementById("status");
 
-    // ===== MÁSCARAS =====
+  // ===== NAVEGAÇÃO =====
+  startBtn.onclick = () => {
+    home.classList.remove("active");
+    formScreen.classList.add("active");
+  };
 
-    // só letras (nome e cidade)
-    const onlyLetters = (v) => v.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+  adminBtn.onclick = () => {
+    window.location.href = "admin.html";
+  };
 
-    // só números
-    const onlyNumbers = (v) => v.replace(/\D/g, "");
+  editarBtn.onclick = () => {
+    previewScreen.classList.remove("active");
+    formScreen.classList.add("active");
+  };
 
-    // NOME
-    nome.addEventListener("input", () => {
-        nome.value = onlyLetters(nome.value);
+  // ===== MÁSCARAS =====
+  const onlyNumbers = v => v.replace(/\D/g, "");
+  const onlyLetters = v => v.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+
+  nome.oninput = () => nome.value = onlyLetters(nome.value);
+  cidade.oninput = () => cidade.value = onlyLetters(cidade.value);
+  idade.oninput = () => idade.value = onlyNumbers(idade.value).slice(0, 2);
+
+  telefone.oninput = () => {
+    let v = onlyNumbers(telefone.value).slice(0, 11);
+    if (v.length > 10) {
+      v = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else {
+      v = v.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    }
+    telefone.value = v;
+  };
+
+  // ===== PREVIEW =====
+  fotos.onchange = () => {
+    preview.innerHTML = "";
+    [...fotos.files].forEach(f => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(f);
+      preview.appendChild(img);
     });
+  };
 
-    // CIDADE
-    cidade.addEventListener("input", () => {
-        cidade.value = onlyLetters(cidade.value);
-    });
+  // ===== FORM → PREVIEW =====
+  form.onsubmit = e => {
+    e.preventDefault();
 
-    // IDADE (máx 2 dígitos)
-    idade.addEventListener("input", () => {
-        idade.value = onlyNumbers(idade.value).slice(0, 2);
-    });
-
-    // ALTURA (ex: 1.75)
-    altura.addEventListener("input", () => {
-        let v = altura.value.replace(/[^0-9.]/g, "");
-
-        // impede mais de um ponto
-        const parts = v.split(".");
-        if (parts.length > 2) {
-            v = parts[0] + "." + parts[1];
-        }
-
-        altura.value = v;
-    });
-
-    // EMAIL (limita caracteres inválidos)
-    email.addEventListener("input", () => {
-        email.value = email.value.replace(/[^a-zA-Z0-9@._-]/g, "");
-    });
-
-    // TELEFONE (formato brasileiro)
-    telefone.addEventListener("input", () => {
-        let v = onlyNumbers(telefone.value).slice(0, 11);
-
-        if (v.length > 10) {
-            // celular (11 dígitos)
-            v = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-        } else {
-            // fixo (10 dígitos)
-            v = v.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-        }
-
-        telefone.value = v;
-    });
-
-    // ===== NAVEGAÇÃO =====
-    startBtn.onclick = () => {
-        home.classList.remove("active");
-        formScreen.classList.add("active");
-    };
-
-    editarBtn.onclick = () => {
-        previewScreen.classList.remove("active");
-        formScreen.classList.add("active");
-    };
-
-    // ===== PREVIEW =====
-    fotos.onchange = () => {
-        preview.innerHTML = "";
-        [...fotos.files].forEach(f => {
-            const img = document.createElement("img");
-            img.src = URL.createObjectURL(f);
-            preview.appendChild(img);
-        });
-    };
-
-    // ===== FORM → PREVIEW =====
-    form.onsubmit = e => {
-        e.preventDefault();
-
-        dados.innerHTML = `
+    dados.innerHTML = `
       <p><b>Nome:</b> ${nome.value}</p>
       <p><b>Idade:</b> ${idade.value}</p>
       <p><b>Altura:</b> ${altura.value}</p>
@@ -128,76 +91,73 @@ document.addEventListener("DOMContentLoaded", () => {
       <p><b>Cidade:</b> ${cidade.value}</p>
     `;
 
-        imagens.innerHTML = "";
-        [...fotos.files].forEach(f => {
-            const img = document.createElement("img");
-            img.src = URL.createObjectURL(f);
-            imagens.appendChild(img);
-        });
-
-        formScreen.classList.remove("active");
-        previewScreen.classList.add("active");
-    };
-
-    // ===== ENVIO SEM STORAGE (BASE64) =====
-    confirmarBtn.onclick = async () => {
-
-        if (fotos.files.length === 0) {
-            alert("Envie pelo menos uma imagem!");
-            return;
-        }
-
-        status.textContent = "Enviando...";
-
-        try {
-            const id = Date.now().toString();
-            const imagensBase64 = [];
-
-            // converter imagens para base64
-            for (let file of fotos.files) {
-                const base64 = await toBase64(file);
-                imagensBase64.push(base64);
-            }
-
-            // salvar no Firestore
-            await db.collection("modelos").doc(id).set({
-                nome: nome.value,
-                idade: idade.value,
-                altura: altura.value,
-                email: email.value,
-                telefone: telefone.value,
-                cidade: cidade.value,
-                fotos: imagensBase64,
-                criadoEm: new Date()
-            });
-
-            status.textContent = "Enviado com sucesso";
-
-        } catch (error) {
-            console.error(error);
-            status.textContent = "Erro ao enviar";
-        }
-    };
-
-    const adminBtn = document.getElementById("adminBtn");
-
-    adminBtn.addEventListener("click", () => {
-        window.location.href = "admin.html";
+    imagens.innerHTML = "";
+    [...fotos.files].forEach(f => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(f);
+      imagens.appendChild(img);
     });
 
-     if ('serviceWorker' in navigator) {
-       navigator.serviceWorker.register('sw.js');
-     }
-  });
-}
+    formScreen.classList.remove("active");
+    previewScreen.classList.add("active");
+  };
+
+  // ===== FUNÇÃO BASE64 =====
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // ===== ENVIO FINAL (FUNCIONA EM PWA) =====
+  confirmarBtn.onclick = async () => {
+
+    console.log("clicou enviar");
+
+    if (fotos.files.length === 0) {
+      alert("Envie pelo menos uma imagem!");
+      return;
+    }
+
+    status.textContent = "Enviando...";
+
+    try {
+      const id = Date.now().toString();
+      const imagensBase64 = [];
+
+      for (let file of fotos.files) {
+        const base64 = await toBase64(file);
+        imagensBase64.push(base64);
+      }
+
+      await db.collection("modelos").doc(id).set({
+        nome: nome.value,
+        idade: idade.value,
+        altura: altura.value,
+        email: email.value,
+        telefone: telefone.value,
+        cidade: cidade.value,
+        fotos: imagensBase64,
+        criadoEm: new Date()
+      });
+
+      console.log("ENVIADO");
+
+      status.textContent = "Casting enviado com sucesso";
+
+      // reset
+      form.reset();
+      preview.innerHTML = "";
+      imagens.innerHTML = "";
+
+    } catch (error) {
+      console.error("ERRO:", error);
+      alert(error.message);
+      status.textContent = "Erro ao enviar";
+    }
+  };
 
 });
-
-function toBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
